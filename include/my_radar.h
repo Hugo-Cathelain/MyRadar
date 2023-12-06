@@ -20,6 +20,21 @@
     #include <stdlib.h>
     #include <time.h>
     #include <unistd.h>
-    #include <stdio.h>
+    #include <fcntl.h>
+    #include <sys/stat.h>
+
+typedef struct {
+    sfSprite *sprite;
+    sfTexture *texture;
+    sfVector2f pos;
+    sfVector2f scale;
+    sfIntRect rect;
+    sfRectangleShape *rec;
+} sprite_t;
+
+int my_strlen(char const *str);
+void my_putstr(char *str);
+
+sprite_t *set_background(void);
 
 #endif /* !MY_RADAR_H_ */

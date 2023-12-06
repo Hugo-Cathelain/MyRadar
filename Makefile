@@ -7,15 +7,17 @@
 
 NAME = my_radar
 SRC =   src/radar.c \
-		src/shared/my_strlen.c
+		src/shared/my_strlen.c \
+		src/shared/my_putstr.c \
+		src/set_sprites.c
 MAIN = src/main.c
 OBJ = $(SRC:.c=.o)
-FLAG_TEST = -Iinclude --coverage -lcriterion
+CSFML = -lcsfml-graphics -lcsfml-system -lcsfml-window -lcsfml-audio
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	gcc -o $(NAME) $(MAIN) $(OBJ) -g3
+	gcc -o $(NAME) $(MAIN) $(OBJ) $(CSFML) -g3
 	make clean
 
 clean:
@@ -25,11 +27,3 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
-
-tests_run:
-	gcc -o unit_tests tests/testing.c $(SRC) $(FLAG_TEST)
-	make clean
-	./unit_tests && gcovr -e tests/ && gcovr -e tests/ -b
-
-tests_clean:
-	rm -f unit_tests && rm -f *.gcno && rm -f *.gcda
