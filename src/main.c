@@ -8,36 +8,39 @@
 
 int print_usage(void)
 {
-    my_putstr("USAGE\n    ./my_radar\n\nDESCRIPTION\n");
-    my_putstr("");
-    my_putstr("");
-    my_putstr("");
-    my_putstr("");
-    my_putstr("");
+    my_putstr("Air traffic simulation panel\n\n");
+    my_putstr("USAGE\n    ./my_radar [OPTIONS] path_to_script\n    path_to_s");
+    my_putstr("cript   The path to the script file.\n\nOPTION\n    -h    pri");
+    my_putstr("nt the usage and quit.\n\nUSER INTERACTIONS\n    \'L\'    ena");
+    my_putstr("ble/disable hitboxes and areas.\n    \'S\'    enable/disable ");
+    my_putstr("sprites.\n");
     return 0;
+}
+
+int rows(char *buffer)
+{
+    int count = 0;
+
+    for (int i = 0; buffer[i]; i++)
+        if (buffer[i] == '\n')
+            count++;
+    return count;
 }
 
 char **get_map(char *buffer)
 {
-    char **map;
+    char **map = malloc(sizeof(char) * 99);
     int i = 0;
-    int j = 0;
-    int k = 0;
+    int count = rows(buffer);
+    char *token = my_strtok((char *)buffer, "\n");
 
-    map = (char **)malloc(sizeof(char *) * my_strlen(buffer) + 2);
-    map[k] = (char *)malloc(sizeof(char) * my_strlen(buffer) + 1);
-    for (i = 0; buffer[i] != '\0'; i++) {
-        if (buffer[i] == '\n') {
-            i++;
-            k++;
-            map[k] = (char *)malloc(sizeof(char) * my_strlen(buffer) + 1);
-            j = 0;
-        }
-        map[k][j] = buffer[i];
-        j++;
+    for (i = 0; token != NULL; i++) {
+        map[i] = malloc(sizeof(char) * (my_strlen(token) + 1));
+        my_strcpy(map[i], token);
+        map[i][my_strlen(token)] = '\0';
+        token = my_strtok(NULL, "\n");
     }
-    k++;
-    map[k] = 0;
+    map[i] = 0;
     return map;
 }
 
@@ -56,6 +59,7 @@ int try_h_flag(char *av)
     stat(av, &file);
     buffer = malloc(file.st_size);
     read(fileopen, buffer, file.st_size);
+    buffer[file.st_size] = '\0';
     map = get_map(buffer);
     return my_radar(map);
 }

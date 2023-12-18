@@ -22,27 +22,44 @@ sprite_t *set_background(void)
     return backg;
 }
 
-sprite_t *set_tower(void)
+static sfCircleShape *set_circle(sfVector2f pos)
+{
+    sfCircleShape *circ = sfCircleShape_create();
+
+    pos.x = pos.x - 40.0;
+    pos.y = pos.y - 30.0;
+    sfCircleShape_setOutlineColor(circ, sfRed);
+    sfCircleShape_setOutlineThickness(circ, 2.0);
+    sfCircleShape_setPosition(circ, pos);
+    sfCircleShape_setRadius(circ, 50.0);
+    sfCircleShape_setFillColor(circ, sfTransparent);
+    return circ;
+}
+
+static sprite_t *set_tower(void)
 {
     sprite_t *tow = malloc(sizeof(sprite_t));
-    sfVector2f pos = {400, 600};
+    sfVector2f pos = {320, 240};
     sfVector2f scale = {0.029, 0.034};
 
     tow->sprite = sfSprite_create();
     tow->pos = pos;
     tow->texture = sfTexture_createFromFile("tower.png", NULL);
     tow->scale = scale;
+    tow->circle = set_circle(pos);
     sfSprite_setTexture(tow->sprite, tow->texture, sfFalse);
     sfSprite_setScale(tow->sprite, scale);
     sfSprite_setPosition(tow->sprite, pos);
     return tow;
 }
 
-sfRectangleShape *set_rec(sfVector2f pos)
+static sfRectangleShape *set_rec(sfVector2f pos)
 {
     sfRectangleShape *rec = sfRectangleShape_create();
     sfVector2f size = {20, 20};
+    sfVector2f origint = {10, 10};
 
+    sfRectangleShape_setOrigin(rec, origint);
     sfRectangleShape_setFillColor(rec, sfTransparent);
     sfRectangleShape_setSize(rec, size);
     sfRectangleShape_setPosition(rec, pos);
@@ -51,19 +68,45 @@ sfRectangleShape *set_rec(sfVector2f pos)
     return rec;
 }
 
-sprite_t *set_airplane(void)
+static sprite_t *set_airplane(void)
 {
     sprite_t *airp = malloc(sizeof(sprite_t));
-    sfVector2f pos = {800, 500};
+    sfVector2f pos = {90, 90};
     sfVector2f scale = {0.022, 0.022};
+    sfVector2f origin = {450, 450};
 
     airp->sprite = sfSprite_create();
     airp->pos = pos;
     airp->texture = sfTexture_createFromFile("airplane.png", NULL);
     airp->scale = scale;
     airp->rec = set_rec(pos);
+    airp->thick = 2.0;
+    sfSprite_setOrigin(airp->sprite, origin);
     sfSprite_setTexture(airp->sprite, airp->texture, sfFalse);
     sfSprite_setScale(airp->sprite, scale);
     sfSprite_setPosition(airp->sprite, pos);
     return airp;
+}
+
+sfText *set_txt(void)
+{
+    sfText *txt = sfText_create();
+    sfFont* font = sfFont_createFromFile("arial.ttf");
+    sfVector2f pos = {1750, 50};
+
+    sfText_setColor(txt, sfWhite);
+    sfText_setPosition(txt, pos);
+    sfText_setFont(txt, font);
+    sfText_setCharacterSize(txt, 25);
+    sfText_setString(txt, "time : NULL");
+    return txt;
+}
+
+all_sprite_t *set_all(void)
+{
+    all_sprite_t *all = malloc(sizeof(all_sprite_t));
+
+    all->air = set_airplane();
+    all->tow = set_tower();
+    return all;
 }

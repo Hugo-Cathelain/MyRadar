@@ -9,6 +9,13 @@ NAME = my_radar
 SRC =   src/radar.c \
 		src/shared/my_strlen.c \
 		src/shared/my_putstr.c \
+		src/shared/my_strtok.c \
+		src/shared/my_strcmp.c \
+		src/shared/my_strdup.c \
+		src/shared/my_atoi.c \
+		src/shared/my_isdigit.c \
+		src/shared/my_strcpy.c \
+		src/shared/my_atof.c \
 		src/set_sprites.c
 MAIN = src/main.c
 OBJ = $(SRC:.c=.o)
