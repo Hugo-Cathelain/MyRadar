@@ -40,6 +40,10 @@ typedef struct {
 typedef struct {
     sprite_t *air;
     sprite_t *tow;
+    sfText *txt;
+    int shap;
+    int disp;
+    int av;
 } all_sprite_t;
 
 int my_strlen(char const *str);
@@ -54,5 +58,6 @@ int my_isdigit(char ch);
 int my_radar(char **map);
 sprite_t *set_background(void);
 sfText *set_txt(void);
+sfRenderWindow *set_wdw(void);
 
 #endif /* !MY_RADAR_H_ */

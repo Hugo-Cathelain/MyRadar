@@ -108,5 +108,18 @@ all_sprite_t *set_all(void)
 
     all->air = set_airplane();
     all->tow = set_tower();
+    all->txt = set_txt();
+    all->disp = 0;
+    all->shap = 0;
+    all->av = 0;
     return all;
+}
+
+sfRenderWindow *set_wdw(void)
+{
+    sfRenderWindow *wdw;
+    sfVideoMode vid = {1920, 1080, 60};
+
+    wdw = sfRenderWindow_create(vid, "My_radar", sfClose | sfResize, NULL);
+    return wdw;
 }

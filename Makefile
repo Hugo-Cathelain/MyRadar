@@ -19,7 +19,7 @@ SRC =   src/radar.c \
 		src/set_sprites.c
 MAIN = src/main.c
 OBJ = $(SRC:.c=.o)
-CSFML = -lcsfml-graphics -lcsfml-system -lcsfml-window -lcsfml-audio
+CSFML = -lcsfml-graphics -lcsfml-system -lcsfml-window -lcsfml-audio -lm
 
 all: $(NAME)
 

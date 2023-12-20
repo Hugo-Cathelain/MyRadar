@@ -61,6 +61,8 @@ int try_h_flag(char *av)
     read(fileopen, buffer, file.st_size);
     buffer[file.st_size] = '\0';
     map = get_map(buffer);
+    if (invalid_args(map))
+        return 84;
     return my_radar(map);
 }
 
