@@ -6,23 +6,6 @@
 */
 #include "../include/my_radar.h"
 
-static void toggle_rectangle(sfRenderWindow *wdw, sprite_t *air,
-    sfEvent *event, sprite_t *tow)
-{
-    if (event->key.code == sfKeyL) {
-        if (air->thick == 2.0) {
-            air->thick = 0;
-            sfCircleShape_setOutlineThickness(tow->circle, air->thick);
-            return sfRectangleShape_setOutlineThickness(air->rec, air->thick);
-        }
-        if (air->thick == 0) {
-            air->thick = 2.0;
-            sfCircleShape_setOutlineThickness(tow->circle, air->thick);
-            return sfRectangleShape_setOutlineThickness(air->rec, air->thick);
-        }
-    }
-}
-
 static void analyse_event(sfRenderWindow *wdw, all_sprite_t *all)
 {
     sfEvent event;

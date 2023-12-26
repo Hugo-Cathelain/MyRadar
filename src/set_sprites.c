@@ -80,7 +80,6 @@ static sprite_t *set_airplane(void)
     airp->texture = sfTexture_createFromFile("airplane.png", NULL);
     airp->scale = scale;
     airp->rec = set_rec(pos);
-    airp->thick = 2.0;
     sfSprite_setOrigin(airp->sprite, origin);
     sfSprite_setTexture(airp->sprite, airp->texture, sfFalse);
     sfSprite_setScale(airp->sprite, scale);
@@ -88,7 +87,7 @@ static sprite_t *set_airplane(void)
     return airp;
 }
 
-sfText *set_txt(void)
+static sfText *set_txt(void)
 {
     sfText *txt = sfText_create();
     sfFont* font = sfFont_createFromFile("arial.ttf");

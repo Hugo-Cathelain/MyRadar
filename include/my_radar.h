@@ -32,7 +32,6 @@ typedef struct {
     sfVector2f scale;
     sfIntRect rect;
     sfRectangleShape *rec;
-    float thick;
     sfCircleShape *circle;
     int speed;
     int depart;
@@ -60,7 +59,6 @@ int my_radar(char **map);
 int invalid_args(char **map);
 all_sprite_t *set_all(void);
 sprite_t *set_background(void);
-sfText *set_txt(void);
 sfRenderWindow *set_wdw(void);
 
 #endif /* !MY_RADAR_H_ */
