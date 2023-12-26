@@ -23,6 +23,7 @@
     #include <fcntl.h>
     #include <sys/stat.h>
     #include <stdio.h>
+    #include <math.h>
 
 typedef struct {
     sfSprite *sprite;
@@ -56,6 +57,8 @@ double my_atof(const char *str);
 int my_isdigit(char ch);
 
 int my_radar(char **map);
+int invalid_args(char **map);
+all_sprite_t *set_all(void);
 sprite_t *set_background(void);
 sfText *set_txt(void);
 sfRenderWindow *set_wdw(void);

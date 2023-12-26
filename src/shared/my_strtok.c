@@ -6,7 +6,7 @@
 */
 #include "../../include/my_radar.h"
 
-int is_delimiter(char c, char *delimiters)
+int is_delimiter(char c, const char *delimiters)
 {
     while (*delimiters != '\0') {
         if (*delimiters == c)
