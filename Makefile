@@ -16,6 +16,7 @@ SRC =   src/radar.c \
 		src/shared/my_isdigit.c \
 		src/shared/my_strcpy.c \
 		src/shared/my_atof.c \
+		src/shared/my_itob.c \
 		src/set_sprites.c \
 		src/quadtree.c \
 		src/draw.c

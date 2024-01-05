@@ -112,6 +112,15 @@ void draw_next_air(sfRenderWindow *wdw, all_sprite_t *all, float s,
 static int draw(sfRenderWindow *wdw, all_sprite_t *all, char **map,
     float seconds)
 {
+    char *txt = malloc(sizeof(char) * 99);
+    char *ttt = "time is ";
+    char *ttx = " seconds";
+
+    my_itob((int)seconds, txt, 10);
+    txt = my_strcat(txt, ttx);
+    txt = my_strcat(ttt, txt);
+    sfText_setString(all->txt, txt);
+    free(txt);
     sfRenderWindow_drawSprite(wdw, all->bck->sprite, NULL);
     all->av = 0;
     for (int i = 0; map[i]; i++)

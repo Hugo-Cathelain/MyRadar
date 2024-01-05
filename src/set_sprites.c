@@ -91,7 +91,7 @@ static sfText *set_txt(void)
 {
     sfText *txt = sfText_create();
     sfFont* font = sfFont_createFromFile("arial.ttf");
-    sfVector2f pos = {1750, 50};
+    sfVector2f pos = {1640, 50};
 
     sfText_setColor(txt, sfWhite);
     sfText_setPosition(txt, pos);

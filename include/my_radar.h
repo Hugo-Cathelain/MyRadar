@@ -25,9 +25,14 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <math.h>
+    #include <limits.h>
 
     #define QT_NODE_CAPACITY (4)
     #define MARGE (1)
+    #define BIN 2
+    #define OCT 8
+    #define DEC 10
+    #define HEX 16
 
 typedef struct {
     sfSprite *sprite;
@@ -93,6 +98,7 @@ char *my_strdup(char *str);
 char *my_strcpy(char *dest, const char *src);
 double my_atof(const char *str);
 int my_isdigit(char ch);
+void my_itob(ssize_t nbr, char *buffer, int base);
 
 int my_radar(char **map, struct stat *file);
 int invalid_args(char **map);
