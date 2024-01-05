@@ -138,27 +138,6 @@ void set_base(struct quad *quad, float seconds, all_sprite_t *all, char **map)
     collision(quad, seconds, all, map);
 }
 
-static void draw_plane(plane_t *plane, sfRenderWindow *wdw, all_sprite_t *all,
-    float seconds)
-{
-    plane_t *tm = plane;
-    sfVector2f pos = tm->pos;
-    float marge = 0.1;
-    float dist = sqrt(pow(tm->arr.x - pos.x, 2) + pow(tm->arr.y - pos.y, 2));
-    float trav = (tm->speed * (seconds - tm->depart));
-
-    if (seconds > tm->depart && !plane->crashed) {
-        plane->pos.x += trav * (tm->arr.x - tm->pos.x) / dist;
-        plane->pos.y += trav * (tm->arr.y - tm->pos.y) / dist;
-        all->pl[plane->num]->pos = plane->pos;
-    }
-    if (fabs(tm->pos.x - tm->arr.x) < marge &&
-        fabs(tm->pos.y - tm->arr.y) < marge) {
-        plane->crashed = 1;
-        all->pl[plane->num]->crashed = 1;
-    }
-}
-
 void draw_quad(quadtree_t *quad, all_sprite_t *all, sfRenderWindow *wdw,
     float seconds)
 {
@@ -170,9 +149,6 @@ void draw_quad(quadtree_t *quad, all_sprite_t *all, sfRenderWindow *wdw,
         draw_quad(quad->bot_left, all, wdw, seconds);
         draw_quad(quad->bot_right, all, wdw, seconds);
     }
-    if (quad->planes)
-        for (int i = 0; i < quadtree_planes_size(quad->planes); i++)
-            draw_plane(quad->planes[i], wdw, all, seconds);
     if (all->quad) {
         sfRectangleShape_setPosition(all->air->rec, quad->boundry->pos);
         sfRectangleShape_setSize(all->air->rec, quad->boundry->size);
