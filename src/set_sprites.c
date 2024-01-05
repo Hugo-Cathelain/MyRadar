@@ -101,16 +101,53 @@ static sfText *set_txt(void)
     return txt;
 }
 
-all_sprite_t *set_all(void)
+int count_av(char **map)
+{
+    int co = 0;
+
+    for (int i = 0; map[i]; i++)
+        if (map[i][0] == 'A')
+            co++;
+    return co;
+}
+
+plane_t **set_list(char **map, all_sprite_t *all, struct stat *file)
+{
+    char *tmp;
+    char *token;
+    int j = 0;
+    plane_t *plane;
+
+    all->count_plan = count_av(map);
+    all->pl = (plane_t **)malloc(sizeof(plane_t *) * all->count_plan + 1);
+    for (int i = 0; map[i]; i++) {
+        if (map[i][0] == 'A') {
+            plane = malloc(sizeof(plane_t));
+            tmp = my_strdup(map[i]);
+            token = my_strtok((char *)tmp, " \t");
+            all->pl[j] = get_plane(tmp, token, plane);
+            all->pl[j]->id = i;
+            all->pl[j]->num = j;
+            j++;
+            all->pl[j] = NULL;
+        }
+    }
+    return all->pl;
+}
+
+all_sprite_t *set_all(char **map, struct stat *file)
 {
     all_sprite_t *all = malloc(sizeof(all_sprite_t));
 
     all->air = set_airplane();
     all->tow = set_tower();
+    all->bck = set_background();
     all->txt = set_txt();
     all->disp = 0;
     all->shap = 0;
+    all->quad = 0;
     all->av = 0;
+    all->pl = set_list(map, all, file);
     return all;
 }
 

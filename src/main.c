@@ -13,7 +13,7 @@ int print_usage(void)
     my_putstr("cript   The path to the script file.\n\nOPTION\n    -h    pri");
     my_putstr("nt the usage and quit.\n\nUSER INTERACTIONS\n    \'L\'    ena");
     my_putstr("ble/disable hitboxes and areas.\n    \'S\'    enable/disable ");
-    my_putstr("sprites.\n");
+    my_putstr("sprites.\n    'Q'    enable/disable display of quadtree.\n");
     return 0;
 }
 
@@ -27,18 +27,16 @@ int rows(char *buffer)
     return count;
 }
 
-char **get_map(char *buffer)
+char **get_map(FILE *file, struct stat *files)
 {
-    char **map = malloc(sizeof(char) * 99);
+    char **map = malloc(sizeof(char) * files->st_size);
     int i = 0;
-    int count = rows(buffer);
-    char *token = my_strtok((char *)buffer, "\n");
+    char *line = NULL;
+    size_t size = 50;
 
-    for (i = 0; token != NULL; i++) {
-        map[i] = malloc(sizeof(char) * (my_strlen(token) + 1));
-        my_strcpy(map[i], token);
-        map[i][my_strlen(token)] = '\0';
-        token = my_strtok(NULL, "\n");
+    while (getline(&line, &size, file) != -1) {
+        map[i] = my_strdup(line);
+        i++;
     }
     map[i] = 0;
     return map;
@@ -48,8 +46,8 @@ int try_h_flag(char *av)
 {
     struct stat file;
     int fileopen;
-    char *buffer;
     char **map;
+    FILE *files = NULL;
 
     if (av[0] == '-' && av[1] == 'h' && my_strlen(av) == 2)
         return print_usage();
@@ -57,13 +55,12 @@ int try_h_flag(char *av)
     if (fileopen == -1)
         return 84;
     stat(av, &file);
-    buffer = malloc(file.st_size);
-    read(fileopen, buffer, file.st_size);
-    buffer[file.st_size] = '\0';
-    map = get_map(buffer);
+    files = fopen(av, "r");
+    map = get_map(files, &file);
     if (invalid_args(map))
         return 84;
-    return my_radar(map);
+    close(fileopen);
+    return my_radar(map, &file);
 }
 
 int main(int ac, char **av)

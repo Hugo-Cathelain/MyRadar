@@ -16,7 +16,9 @@ SRC =   src/radar.c \
 		src/shared/my_isdigit.c \
 		src/shared/my_strcpy.c \
 		src/shared/my_atof.c \
-		src/set_sprites.c
+		src/set_sprites.c \
+		src/quadtree.c \
+		src/draw.c
 MAIN = src/main.c
 OBJ = $(SRC:.c=.o)
 CSFML = -lcsfml-graphics -lcsfml-system -lcsfml-window -lcsfml-audio -lm

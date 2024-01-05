@@ -17,6 +17,8 @@ static void analyse_event(sfRenderWindow *wdw, all_sprite_t *all)
             all->shap = all->shap == 0;
         if (event.type == sfEvtKeyPressed && event.key.code == sfKeyS)
             all->disp = all->disp == 0;
+        if (event.type == sfEvtKeyPressed && event.key.code == sfKeyQ)
+            all->quad = all->quad == 0;
     }
 }
 
@@ -44,7 +46,7 @@ static int get_tow(char *map)
     return 0;
 }
 
-static sfVector2f get_pos(char *tmp, char *token, sfVector2f pos)
+sfVector2f get_pos(char *tmp, char *token, sfVector2f pos)
 {
     token = my_strtok(NULL, " \t");
     pos.x = my_atof(token);
@@ -53,7 +55,7 @@ static sfVector2f get_pos(char *tmp, char *token, sfVector2f pos)
     return pos;
 }
 
-void draw_tow(sfRenderWindow *wdw, char *map, all_sprite_t *all, float seconds)
+static void draw_tow(sfRenderWindow *wdw, char *map, all_sprite_t *all)
 {
     char *tmp = my_strdup(map);
     char *token = my_strtok((char *)tmp, " \t");
@@ -73,41 +75,49 @@ void draw_tow(sfRenderWindow *wdw, char *map, all_sprite_t *all, float seconds)
     sfRenderWindow_drawSprite(wdw, all->tow->sprite, NULL);
 }
 
-void draw_air(sfRenderWindow *wdw, char *map, all_sprite_t *all, float seconds)
+int draw_air(sfRenderWindow *wdw, char *map, all_sprite_t *all, float seconds)
 {
     char *tmp = my_strdup(map);
     char *token = my_strtok((char *)tmp, " \t");
     sfVector2f pos = get_pos(tmp, token, pos);
     sfVector2f arr = get_pos(tmp, token, arr);
     sfVector2f sped = get_pos(tmp, token, arr);
-    float marge = 1;
     float distance = sqrt(pow(arr.x - pos.x, 2) + pow(arr.y - pos.y, 2));
 
-    pos.x += (sped.x * seconds - sped.y) * (arr.x - pos.x) / distance;
-    pos.y += (sped.x * seconds - sped.y) * (arr.y - pos.y) / distance;
-    if (fabs(pos.x - arr.x) < marge && fabs(pos.y - arr.y) < marge) {
-        map[0] = 'O';
-        return;
+    if (seconds > sped.y) {
+        pos.x += (sped.x * (seconds - sped.y)) * (arr.x - pos.x) / distance;
+        pos.y += (sped.x * (seconds - sped.y)) * (arr.y - pos.y) / distance;
     }
+    if (fabs(pos.x - arr.x) < MARGE && fabs(pos.y - arr.y) < MARGE)
+        return 1;
     sfSprite_setPosition(all->air->sprite, pos);
     sfRectangleShape_setPosition(all->air->rec, pos);
-    if (!all->shap)
+    if (!all->shap && seconds > sped.y)
         sfRenderWindow_drawRectangleShape(wdw, all->air->rec, NULL);
-    if (!all->disp)
+    if (!all->disp && seconds > sped.y)
         sfRenderWindow_drawSprite(wdw, all->air->sprite, NULL);
+    return 0;
 }
 
-int draw(sfRenderWindow *wdw, all_sprite_t *all, char **map, float seconds)
+void draw_next_air(sfRenderWindow *wdw, all_sprite_t *all, float s,
+    char **map)
 {
-    all->av = 0;
-    for (int i = 0; map[i]; i++) {
-        if (map[i][0] && map[i][0] == 'T')
-            draw_tow(wdw, map[i], all, seconds);
-        if (map[i][0] && map[i][0] == 'A') {
-            draw_air(wdw, map[i], all, seconds);
+    for (int i = 0; all->pl[i]; i++)
+        if (!all->pl[i]->crashed && all->pl[i]->depart <= s) {
+            all->pl[i]->crashed += draw_air(wdw, map[all->pl[i]->id], all, s);
             all->av++;
         }
-    }
+}
+
+static int draw(sfRenderWindow *wdw, all_sprite_t *all, char **map,
+    float seconds)
+{
+    sfRenderWindow_drawSprite(wdw, all->bck->sprite, NULL);
+    all->av = 0;
+    for (int i = 0; map[i]; i++)
+        if (map[i][0] && map[i][0] == 'T')
+            draw_tow(wdw, map[i], all);
+    draw_next_air(wdw, all, seconds, map);
     sfRenderWindow_drawText(wdw, all->txt, NULL);
     return 0;
 }
@@ -129,22 +139,23 @@ int invalid_args(char **map)
     return 0;
 }
 
-int my_radar(char **map)
+int my_radar(char **map, struct stat *file)
 {
     sfRenderWindow *wdw = set_wdw();
-    sprite_t *bck = set_background();
-    all_sprite_t *all = set_all();
-    sfClock *clock = sfClock_create();
-    sfTime tim;
-    float seconds;
+    all_sprite_t *all = set_all(map, file);
+    timer_time *timer = set_time();
+    sfVector2f pos = {8, 8};
+    sfVector2f size = {1916, 1076};
+    quadtree_t *quad = set_quad(pos, size);
 
     while (sfRenderWindow_isOpen(wdw)) {
-        tim = sfClock_getElapsedTime(clock);
-        seconds = tim.microseconds / 100000.0;
-        sfRenderWindow_drawSprite(wdw, bck->sprite, NULL);
+        timer->tim = sfClock_getElapsedTime(timer->clock);
+        timer->sec = timer->tim.microseconds / 1000000.0;
         analyse_event(wdw, all);
-        draw(wdw, all, map, seconds);
-        if (!all->av)
+        draw(wdw, all, map, timer->sec);
+        set_base(quad, timer->sec, all, map);
+        draw_quad(quad, all, wdw, timer->sec);
+        if (!all->av || test_av(all))
             sfRenderWindow_close(wdw);
         sfRenderWindow_display(wdw);
         sfRenderWindow_clear(wdw, sfBlack);
