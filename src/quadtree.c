@@ -131,11 +131,12 @@ static void destroy_quad(quadtree_t *quad)
 
 void set_base(struct quad *quad, float seconds, all_sprite_t *all, char **map)
 {
+    all->map = map;
     destroy_quad(quad);
     for (int i = 0; all->pl[i]; i++)
         if (all->pl[i]->depart <= seconds && !all->pl[i]->crashed)
             quadtree_insert(quad, all->pl[i], seconds);
-    collision(quad, seconds, all, map);
+    collision(quad, seconds, all);
 }
 
 void draw_quad(quadtree_t *quad, all_sprite_t *all, sfRenderWindow *wdw,

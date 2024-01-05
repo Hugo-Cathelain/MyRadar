@@ -29,35 +29,45 @@ int tower_here(sfVector2f pos, char **map)
     return 1;
 }
 
-void collion_relay(quadtree_t *quad, all_sprite_t *all, char **map,
-    sfVector2i i_j)
+static sfVector2f speed_multi(plane_t *pl, float sec)
 {
-    float marge = 10;
+    sfVector2f tm = pl->pos;
+    float dist = sqrt(pow(pl->arr.x - tm.x, 2) + pow(pl->arr.y - tm.y, 2));
 
-    if (i_j.x != i_j.y &&
-        (fabs(quad->planes[i_j.x]->pos.x - quad->planes[i_j.y]->pos.x) < marge
-        && fabs(quad->planes[i_j.x]->pos.y - quad->planes[i_j.y]->pos.y)
-        < marge) && (tower_here(quad->planes[i_j.x]->pos, map) &&
-        tower_here(quad->planes[i_j.y]->pos, map))) {
+    tm.x += (pl->speed * (sec - pl->depart)) * (pl->arr.x - tm.x) / dist;
+    tm.y += (pl->speed * (sec - pl->depart)) * (pl->arr.y - tm.y) / dist;
+    return tm;
+}
+
+void collion_relay(quadtree_t *quad, all_sprite_t *all, sfVector2i i_j,
+    float sec)
+{
+    float marge = 25;
+    sfVector2f arr = speed_multi(quad->planes[i_j.x], sec);
+    sfVector2f pos = speed_multi(quad->planes[i_j.y], sec);
+    float distance = sqrt(pow(arr.x - pos.x, 2) + pow(arr.y - pos.y, 2));
+
+    if (quad->planes[i_j.x]->crashed || quad->planes[i_j.y]->crashed)
+        return;
+    if (i_j.x != i_j.y && (tower_here(quad->planes[i_j.x]->pos, all->map) &&
+        tower_here(quad->planes[i_j.y]->pos, all->map)) && distance <= marge) {
         quad->planes[i_j.x]->crashed = 1;
         quad->planes[i_j.y]->crashed = 1;
         all->pl[quad->planes[i_j.x]->num]->crashed = 1;
         all->pl[quad->planes[i_j.y]->num]->crashed = 1;
-        map[quad->planes[i_j.x]->id][0] = 'O';
-        map[quad->planes[i_j.y]->id][0] = 'O';
     }
 }
 
-void collision(quadtree_t *quad, float seconds, all_sprite_t *all, char **map)
+void collision(quadtree_t *quad, float seconds, all_sprite_t *all)
 {
     sfVector2f pos = {0, 0};
     sfVector2i i_j;
 
     if (quad->top_left) {
-        collision(quad->top_left, seconds, all, map);
-        collision(quad->top_right, seconds, all, map);
-        collision(quad->bot_left, seconds, all, map);
-        collision(quad->bot_right, seconds, all, map);
+        collision(quad->top_left, seconds, all);
+        collision(quad->top_right, seconds, all);
+        collision(quad->bot_left, seconds, all);
+        collision(quad->bot_right, seconds, all);
     }
     if (!quad->planes)
         return;
@@ -65,7 +75,7 @@ void collision(quadtree_t *quad, float seconds, all_sprite_t *all, char **map)
         for (int j = 0; j < quadtree_planes_size(quad->planes); j++) {
             i_j.x = i;
             i_j.y = j;
-            collion_relay(quad, all, map, i_j);
+            collion_relay(quad, all, i_j, seconds);
         }
 }
 
