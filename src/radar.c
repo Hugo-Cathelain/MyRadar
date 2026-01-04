@@ -112,22 +112,22 @@ void draw_next_air(sfRenderWindow *wdw, all_sprite_t *all, float s,
 static int draw(sfRenderWindow *wdw, all_sprite_t *all, char **map,
     float seconds)
 {
-    char *txt = malloc(sizeof(char) * 99);
-    char *ttt = "time is ";
-    char *ttx = " seconds";
+    // char *txt = malloc(sizeof(char) * 99);
+    // char *ttt = "time is ";
+    // char *ttx = " seconds";
 
-    my_itob((int)seconds, txt, 10);
-    txt = my_strcat(txt, ttx);
-    txt = my_strcat(ttt, txt);
-    sfText_setString(all->txt, txt);
-    free(txt);
+    // my_itob((int)seconds, txt, 10);
+    // txt = strcat(txt, ttx);
+    // txt = strcat(ttt, txt);
+    // sfText_setString(all->txt, txt);
+    // free(txt);
     sfRenderWindow_drawSprite(wdw, all->bck->sprite, NULL);
     all->av = 0;
     for (int i = 0; map[i]; i++)
         if (map[i][0] && map[i][0] == 'T')
             draw_tow(wdw, map[i], all);
     draw_next_air(wdw, all, seconds, map);
-    sfRenderWindow_drawText(wdw, all->txt, NULL);
+    // sfRenderWindow_drawText(wdw, all->txt, NULL);
     return 0;
 }
 
