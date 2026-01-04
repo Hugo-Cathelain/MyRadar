@@ -65,3 +65,8 @@ This project utilizes a custom implementation of standard C library functions (l
 *   `my_atoi`, `my_atof` (String to number conversion)
 *   `my_strlen`, `my_strcmp`, `my_strcpy`, `my_strdup` (String manipulation)
 *   `my_strtok` (String tokenization)
+
+## Screenshots
+
+![Main view](screenshots/screenshot1.png)
+![Collision view](screenshots/screenshot2.png)
