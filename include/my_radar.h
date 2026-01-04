@@ -108,6 +108,8 @@ sfRenderWindow *set_wdw(void);
 sfVector2f get_pos(char *tmp, char *token, sfVector2f pos);
 void set_base(struct quad *quad, float seconds, all_sprite_t *all, char **map);
 quadtree_t *set_quad(sfVector2f pos, sfVector2f size);
+void draw_quad(quadtree_t *quad, all_sprite_t *all, sfRenderWindow *wdw,
+    float seconds);
 void collision(quadtree_t *quad, float seconds, all_sprite_t *all);
 plane_t *get_plane(char *tmp, char *token, plane_t *plane);
 size_t quadtree_planes_size(plane_t *planes[]);
